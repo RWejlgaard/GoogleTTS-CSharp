@@ -6,12 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Google.Cloud.TextToSpeech.V1;
 
-namespace ConsoleApp2
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
+namespace ConsoleApp2 {
+    class Program {
+        static void Main(string[] args) {
             Console.WriteLine("1: type text manually");
             Console.WriteLine("2: Parse from file");
             var answer = Console.ReadLine();
@@ -29,13 +26,13 @@ namespace ConsoleApp2
                 case "2":
                     Console.WriteLine("Reading from input.txt");
                     var count = 0;
-                    foreach (string line in File.ReadLines(
-                        $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\\OneDrive\\DaVinci Design\\VO\\GeneratedGCloud\\input.txt")
-                    ) {
+                    foreach (string line in File.ReadLines($"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\\OneDrive\\DaVinci Design\\VO\\GeneratedGCloud\\For video\\input.txt")) {
                         var filename = line.Length > 30 ? line.Substring(0, 30) : line;
 
-                        synth(line, $"{filename}.mp3");
-                        count++;
+                        if (filename != "") {
+                            synth(line, $"{filename}.mp3");
+                            count++;
+                        }
                     }
                     break;
             }
@@ -44,22 +41,19 @@ namespace ConsoleApp2
         static void synth(string text, string filename) {
             var client = TextToSpeechClient.Create();
 
-            var input = new SynthesisInput
-            {
+            var input = new SynthesisInput {
                 Text = text
             };
 
-            var voice = new VoiceSelectionParams
-            {
+            var voice = new VoiceSelectionParams {
                 LanguageCode = "en-AU",
                 Name = "en-AU-Wavenet-B"
             };
 
-            var config = new AudioConfig
-            {
+            var config = new AudioConfig {
                 AudioEncoding = AudioEncoding.Mp3,
                 Pitch = 1,
-                SpeakingRate = 1
+                SpeakingRate = 0.95
             };
 
             /*VoiceSelectionParams voice = new VoiceSelectionParams
@@ -75,15 +69,13 @@ namespace ConsoleApp2
                 SpeakingRate = 1
             };*/
 
-            var response = client.SynthesizeSpeech(new SynthesizeSpeechRequest
-            {
+            var response = client.SynthesizeSpeech(new SynthesizeSpeechRequest {
                 Input = input,
                 Voice = voice,
                 AudioConfig = config
             });
 
-            using (Stream output = File.Create($"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\\OneDrive\\DaVinci Design\\VO\\GeneratedGCloud\\" + filename))
-            {
+            using (Stream output = File.Create($"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\\OneDrive\\DaVinci Design\\VO\\GeneratedGCloud\\For video\\" + filename)) {
                 response.AudioContent.WriteTo(output);
                 Console.WriteLine($"Audio content written to file '{filename}'");
             }
